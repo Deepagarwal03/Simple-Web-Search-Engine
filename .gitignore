@@ -1,0 +1,13 @@
+.DS_Store
+.idea/
+target/
+*.class
+*.log
+.settings/
+.project
+.classpath
+out/
+*.iml
+
+# Local data files
+crawled_data.txt
