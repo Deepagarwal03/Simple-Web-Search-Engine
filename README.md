@@ -1,17 +1,21 @@
 # Simple Java Search Engine
 
-A small Java CLI project that crawls web pages, stores page titles in MySQL, and lets you search saved pages by keyword.
+A beginner-friendly Java project that crawls web pages, stores page data in MySQL, and lets you search saved results from the terminal.
+
+This project is built with Java, Maven, JSoup, and MySQL, and it runs on macOS, Windows, and Linux as long as Java, Maven, and MySQL are installed.
 
 ## Features
 
-- Crawl a starting URL to a chosen depth
-- Extract page titles with JSoup
+- Crawl a website starting from a given URL
+- Follow links up to a selected depth
+- Extract page titles using JSoup
 - Save crawled pages into MySQL
-- Search saved pages by keyword from the terminal
+- Search stored pages by keyword
+- Run from a simple command-line menu
 
 ## Tech Stack
 
-- Java
+- Java 8+
 - Maven
 - JSoup
 - MySQL
@@ -35,23 +39,35 @@ A small Java CLI project that crawls web pages, stores page titles in MySQL, and
                     └── WebScraper.java
 ```
 
-## Can You Run This On macOS?
+## How It Works
 
-Yes. This project is standard Java and Maven, so it can run on macOS as long as you have:
+The application starts with a terminal menu:
 
-- Java installed
-- Maven installed
-- MySQL running locally or reachable from your Mac
+1. Crawl a website and save data to the database
+2. Search saved data by keyword
 
-This project was verified to build successfully on macOS with Maven.
+During crawling, the app:
+
+- visits the starting page
+- extracts the page title
+- stores the URL and title in MySQL
+- follows links until the depth limit is reached
+
+During search, the app:
+
+- asks for a keyword
+- checks saved titles in the database
+- prints matching URLs
 
 ## Prerequisites
 
-- Java 8 or newer
-- Maven 3+
-- MySQL 8+
+Make sure these are installed:
 
-Check your tools:
+- Java
+- Maven
+- MySQL
+
+You can verify with:
 
 ```bash
 java -version
@@ -59,19 +75,22 @@ mvn -version
 mysql --version
 ```
 
-## Setup
+## Database Setup
 
-### 1. Create the database
-
-Run the schema file in MySQL:
+Create the database and table with:
 
 ```bash
 mysql -u root -p < schema.sql
 ```
 
-### 2. Configure database connection
+This creates:
 
-The app reads database settings from environment variables.
+- database: `search_engine`
+- table: `pages`
+
+## Configuration
+
+The application reads MySQL settings from environment variables.
 
 ```bash
 export SEARCH_ENGINE_DB_URL="jdbc:mysql://localhost:3306/search_engine"
@@ -79,63 +98,80 @@ export SEARCH_ENGINE_DB_USER="root"
 export SEARCH_ENGINE_DB_PASSWORD="your_password"
 ```
 
-If you do not set them, the app defaults to:
+Default values if not provided:
 
-- URL: `jdbc:mysql://localhost:3306/search_engine`
-- User: `root`
-- Password: empty string
+- `SEARCH_ENGINE_DB_URL=jdbc:mysql://localhost:3306/search_engine`
+- `SEARCH_ENGINE_DB_USER=root`
+- `SEARCH_ENGINE_DB_PASSWORD=` empty
 
-### 3. Build the project
+## Build
+
+From the project folder:
 
 ```bash
 mvn clean package
 ```
 
-### 4. Run the application
+## Run
+
+Run the application with:
 
 ```bash
-mvn exec:java -Dexec.mainClass=org.example.SearchEngine
+mvn exec:java
 ```
 
-If Maven needs to download the `exec` plugin the first time, that is normal.
+You will see a menu like this:
 
-## How It Works
+```text
+===== Simple Java Search Engine =====
+1. Crawl a website and save to database
+2. Search for a keyword in the database
+```
 
-### Crawl mode
+## Example Workflow
 
-1. Enter option `1`
-2. Provide a starting URL
-3. Provide a crawl depth
-4. The crawler visits pages and stores each page URL and title in MySQL
+1. Start the app
+2. Choose option `1`
+3. Enter a URL like `https://example.com`
+4. Enter crawl depth like `2`
+5. Let the crawler store results in MySQL
+6. Run the app again
+7. Choose option `2`
+8. Search using a word from a saved page title
 
-### Search mode
+## Important Notes
 
-1. Enter option `2`
-2. Provide a keyword
-3. The app searches page titles in MySQL and prints matching URLs
+- Some websites block crawlers or show bot-verification pages
+- Reddit, for example, may return a verification page instead of normal content
+- The current crawler may insert duplicate URLs
+- This project stores page titles only, not full page content
 
-## Notes For Developers
+## Known Limitations
 
-- `WebCrawler` handles recursive crawling and link discovery.
-- `DatabaseManager` manages MySQL reads and writes.
-- `SearchEngine` is the CLI entry point.
-- `WebScraper` and `PageData` are simple helper classes that can be extended for richer indexing later.
+- No duplicate protection in the database yet
+- No crawl delay or rate limiting
+- No `robots.txt` handling
+- No unit tests yet
+- Basic console logging only
 
 ## Suggested Improvements
 
-- Avoid duplicate URL inserts with a unique constraint
-- Store page content, not only titles
-- Add unit tests
-- Add logging instead of `System.out.println`
-- Respect `robots.txt` and add crawl limits/timeouts
+- Add a unique constraint for URLs
+- Store full page text for better searching
+- Add error logging
+- Add tests
+- Add URL normalization
+- Skip bot-check or verification pages
 
-## GitHub Push Checklist
+## GitHub Tips
 
-- Initialize or clean up the git history if needed
-- Commit the current source layout
-- Do not commit `.idea`, `target`, `.DS_Store`, or local data files
-- Do not commit real database passwords
+Before pushing this project:
 
-## License
+- keep `.idea`, `target`, `.DS_Store`, and local crawl output out of git
+- never commit real database passwords
+- add a license if you want others to reuse the code
+- add screenshots or a demo GIF if you want a stronger portfolio project
 
-Add a license before publishing publicly on GitHub if you want others to reuse the code.
+## Author
+
+Created by Deep.
